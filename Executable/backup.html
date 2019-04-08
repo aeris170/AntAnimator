@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>3D TEST</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="../Source/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/base.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/base-context.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/base-context-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/buttons.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/buttons-core.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/buttons-core-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/buttons-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/forms.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/forms-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/forms-nr.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/forms-nr-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids-core.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids-core-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids-responsive.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids-responsive-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids-responsive-old-ie.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids-responsive-old-ie-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids-units.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/grids-units-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-core.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-core-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-dropdown.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-dropdown-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-horizontal.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-horizontal-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-scrollable.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-scrollable-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-skin.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/menus-skin-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/pure.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/pure-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/pure-nr.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/pure-nr-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/tables.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/pure/tables-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/css/styles.css">
+  <script id="vertexShader" type="x-shader/x-vertex">
+    precision mediump float;
+
+		attribute vec3 vPosition;
+    attribute vec2 vTexCoord;
+    attribute vec3 vNormal;
+
+    varying vec2 fTexCoord;
+    varying vec3 fNormal;
+
+    uniform mat4 modelMatrix;
+    uniform mat4 viewMatrix;
+    uniform mat4 projectionMatrix;
+
+		void main() {
+      fTexCoord = vTexCoord;
+      fNormal = (modelMatrix * vec4(vNormal, 0.0)).xyz;
+			gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vPosition, 1.0);
+		}
+		</script>
+  <script id="fragmentShader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    struct DirectionalLight {
+      vec3 color;
+      vec3 direction;
+    };
+
+    varying vec2 fTexCoord;
+    varying vec3 fNormal;
+
+    uniform sampler2D texture;
+    uniform vec3 ambientColor;
+    uniform DirectionalLight sun;
+
+	void main() {
+      vec3 normalizedLightDirection = normalize(sun.direction);
+      vec3 normalizedNormal = normalize(fNormal);
+      vec4 texel = texture2D(texture, fTexCoord);
+      vec3 lightPower = ambientColor + sun.color * max(dot(normalizedNormal, normalizedLightDirection), 0.0);
+
+      gl_FragColor = vec4(0.55 * lightPower.r, 0.24 * lightPower.g, 0.075 * lightPower.b, texel.a); //
+      //gl_FragColor = vec4(fNormal, 1.0);
+      gl_FragColor = vec4(texel.rgb * lightPower, texel.a);
+	}
+		</script>
+  <script type="text/javascript" src="ass2.js"></script>
+  <script type="text/javascript" src="../Source/Insect.js"></script>
+  <script type="text/javascript" src="../Source/BodyPart.js"></script>
+  <script type="text/javascript" src="../Source/Sphere.js"></script>
+  <script type="text/javascript" src="../Source/Cube.js"></script>
+  <script type="text/javascript" src="../Source/lib/initShaders.js"></script>
+  <script type="text/javascript" src="../Source/lib/MV.js"></script>
+</head>
+
+<body>
+  <canvas id="render-surface" width="1280" height="720">
+    Your browser doesn't support HTML5 canvas! upgrad.
+  </canvas>
+  <img id="crate" src="../Source/crate.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="crate2" src="../Source/crate2.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="rainbow" src="../Source/rainbowWrap.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="rainbow2" src="../Source/rainbowWrap2.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="rays" src="../Source/rays.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="metal" src="../Source/metal.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="doga" src="../Source/doga.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <button id="textureChangeButton" class="green-button pure button">Change Texture</button>
+  <button id="saveStateButton" class="green-button pure button">Save State</button>
+  <button id="loadAnimButton" class="green-button pure button">Load Animation</button>
+  <p>
+    <div class="wrapper">
+      <div class="custom-div one">
+        <div>
+          Translate Thorax
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -5 <input id="translateThoraxXSlider" type="range" min="-5" max="5" step="1" value="0" /> 5
+                <p> Y: -5 <input id="translateThoraxYSlider" type="range" min="-5" max="5" step="1" value="0" /> 5
+                  <p> Z: -5 <input id="translateThoraxZSlider" type="range" min="-5" max="5" step="1" value="0" /> 5
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Thorax
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: 0 <input id="rotateThoraxXSlider" type="range" min="0" max="360" step="5" value="60" /> 360
+                <p> Y: 0 <input id="rotateThoraxYSlider" type="range" min="0" max="360" step="5" value="0" /> 360
+                  <p> Z: 0 <input id="rotateThoraxZSlider" type="range" min="0" max="360" step="5" value="270" /> 360
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="custom-div two">
+        <div>
+          Rotate Head
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -45 <input id="rotateHeadXSlider" type="range" min="-45" max="45" step="5" value="0" /> 45
+                <p> Y: 0 <input id="rotateHeadYSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+                  <p> Z: -45 <input id="rotateHeadZSlider" type="range" min="-45" max="45" step="5" value="0" /> 45
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="custom-div three">
+        <div>
+          Rotate Abdomen
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -45 <input id="rotateAbdomenXSlider" type="range" min="-45" max="45" step="5" value="0" /> 45
+                <p> Y: 0 <input id="rotateAbdomenYSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+                  <p> Z: -45 <input id="rotateAbdomenZSlider" type="range" min="-45" max="45" step="5" value="0" /> 45
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="custom-div four">
+        <div>
+          Rotate Head Upper Leg 1
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -15 <input id="rotateHeadUpperLeg1XSlider" type="range" min="-45" max="-15" step="5" value="-30" /> 15
+                <p> Y: -30 <input id="rotateHeadUpperLeg1YSlider" type="range" min="30" max="120" step="5" value="60" /> 60
+                  <p> Z: 0 <input id="rotateHeadUpperLeg1ZSlider" type="range" min="0" max="30" step="5" value="0" disabled /> 30
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Head Lower Leg 1
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: 0 <input id="rotateHeadLowerLeg1XSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+                <p> Y: -15 <input id="rotateHeadLowerLeg1YSlider" type="range" min="30" max="150" step="5" value="45" /> 105
+                  <p> Z: 0 <input id="rotateHeadLowerLeg1ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="custom-div five">
+        <div>
+          Rotate Thorax Upper Leg 1
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -15 <input id="rotateThoraxUpperLeg1XSlider" type="range" min="-15" max="15" step="5" value="0" /> 15
+                <p> Y: -30 <input id="rotateThoraxUpperLeg1YSlider" type="range" min="30" max="120" step="5" value="60" /> 60
+                  <p> Z: 0 <input id="rotateThoraxUpperLeg1ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Thorax Lower Leg 1
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: 0 <input id="rotateThoraxLowerLeg1XSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+                <p> Y: -15 <input id="rotateThoraxLowerLeg1YSlider" type="range" min="30" max="150" step="5" value="45" /> 105
+                  <p> Z: 0 <input id="rotateThoraxLowerLeg1ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="custom-div six">
+        <div>
+          Rotate Abdomen Upper Leg 1
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -15 <input id="rotateAbdomenUpperLeg1XSlider" type="range" min="15" max="45" step="5" value="30" /> 15
+                <p> Y: -30 <input id="rotateAbdomenUpperLeg1YSlider" type="range" min="30" max="120" step="5" value="60" /> 60
+                  <p> Z: 0 <input id="rotateAbdomenUpperLeg1ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Abdomen Lower Leg 1
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: 0 <input id="rotateAbdomenLowerLeg1XSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+                <p> Y: -15 <input id="rotateAbdomenLowerLeg1YSlider" type="range" min="30" max="150" step="5" value="45" /> 105
+                  <p> Z: 0 <input id="rotateAbdomenLowerLeg1ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="custom-div seven">
+        <div>
+          Rotate Head Upper Leg 2
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: 15 <input id="rotateHeadUpperLeg2XSlider" type="range" min="15" max="45" step="5" value="30" /> 45
+                <p> Y: 60 <input id="rotateHeadUpperLeg2YSlider" type="range" min="60" max="150" step="5" value="120" /> 150
+                  <p> Z: 0 <input id="rotateHeadUpperLeg2ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Head Lower Leg 2
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: 0 <input id="rotateHeadLowerLeg2XSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+                <p> Y: -150 <input id="rotateHeadLowerLeg2YSlider" type="range" min="-150" max="-30" step="5" value="-75" /> -30
+                  <p> Z: 0 <input id="rotateHeadLowerLeg2ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="custom-div eight">
+        <div>
+          Rotate Thorax Upper Leg 2
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -15 <input id="rotateThoraxUpperLeg2XSlider" type="range" min="-15" max="15" step="5" value="0" /> 15
+                <p> Y: 60 <input id="rotateThoraxUpperLeg2YSlider" type="range" min="60" max="150" step="5" value="120" /> 150
+                  <p> Z: 0 <input id="rotateThoraxUpperLeg2ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Thorax Lower Leg 2
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -45 <input id="rotateThoraxLowerLeg2XSlider" type="range" min="-45" max="-15" step="5" value="-30" disabled /> -15
+                <p> Y: -150 <input id="rotateThoraxLowerLeg2YSlider" type="range" min="-150" max="-30" step="5" value="-75" /> -30
+                  <p> Z: 0 <input id="rotateThoraxLowerLeg2ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="custom-div nine">
+        <div>
+          Rotate Abdomen Upper Leg 2
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -45 <input id="rotateAbdomenUpperLeg2XSlider" type="range" min="-45" max="-15" step="5" value="-30" /> -15
+                <p> Y: 60 <input id="rotateAbdomenUpperLeg2YSlider" type="range" min="60" max="150" step="5" value="120" /> 150
+                  <p> Z: 0 <input id="rotateAbdomenUpperLeg2ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Abdomen Lower Leg 2
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: 0 <input id="rotateAbdomenLowerLeg2XSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+                <p> Y: -150 <input id="rotateAbdomenLowerLeg2YSlider" type="range" min="-150" max="-30" step="5" value="-75" /> -30
+                  <p> Z: 0 <input id="rotateAbdomenLowerLeg2ZSlider" type="range" min="0" max="360" step="5" value="0" disabled /> 360
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+
+</body>
+
+</html>

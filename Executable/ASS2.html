@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>CS465 - Ant Animator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Eczar:400,500,600,700,800&amp;subset=devanagari,latin-ext" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="../../lib/normalize/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/base.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/base-context.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/base-context-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/buttons.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/buttons-core.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/buttons-core-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/buttons-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/forms.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/forms-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/forms-nr.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/forms-nr-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-core.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-core-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-responsive.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-responsive-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-responsive-old-ie.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-responsive-old-ie-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-units.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-units-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-core.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-core-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-dropdown.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-dropdown-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-horizontal.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-horizontal-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-scrollable.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-scrollable-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-skin.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-skin-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/pure.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/pure-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/pure-nr.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/pure-nr-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/tables.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/tables-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/styles.css">
+  <link rel="shortcut icon" href="../../favicon/favicon.ico">
+  <link rel="icon" sizes="16x16 32x32 64x64" href="../../favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="196x196" href="../../favicon/favicon-192.png">
+  <link rel="icon" type="image/png" sizes="160x160" href="../../favicon/favicon-160.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="../../favicon/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="../../favicon/favicon-64.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../favicon/favicon-16.png">
+  <link rel="apple-touch-icon" href="../../favicon/favicon-57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="../../favicon/favicon-114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="../../favicon/favicon-72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="../../favicon/favicon-144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="../../favicon/favicon-60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="../../favicon/favicon-120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../favicon/favicon-76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="../../favicon/favicon-152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../favicon/favicon-180.png">
+  <meta name="msapplication-TileColor" content="#FFFFFF">
+  <meta name="msapplication-TileImage" content="../../favicon/favicon-144.png">
+  <meta name="msapplication-config" content="../../favicon/browserconfig.xml">
+  <script id="vertexShader" type="x-shader/x-vertex">
+    precision mediump float;
+
+	attribute vec3 vPosition;
+    attribute vec2 vTexCoord;
+    attribute vec3 vNormal;
+
+    varying vec2 fTexCoord;
+    varying vec3 fNormal;
+
+    uniform mat4 modelMatrix;
+    uniform mat4 viewMatrix;
+    uniform mat4 projectionMatrix;
+
+		void main() {
+      fTexCoord = vTexCoord;
+      fNormal = (modelMatrix * vec4(vNormal, 0.0)).xyz;
+			gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vPosition, 1.0);
+		}
+		</script>
+  <script id="fragmentShader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    struct DirectionalLight {
+      vec3 color;
+      vec3 direction;
+    };
+
+    varying vec2 fTexCoord;
+    varying vec3 fNormal;
+
+    uniform sampler2D texture;
+    uniform vec3 ambientColor;
+    uniform DirectionalLight sun;
+
+	void main() {
+      vec3 normalizedLightDirection = normalize(sun.direction);
+      vec3 normalizedNormal = normalize(fNormal);
+      vec4 texel = texture2D(texture, fTexCoord);
+      vec3 lightPower = ambientColor + sun.color * max(dot(normalizedNormal, normalizedLightDirection), 0.0);
+
+      gl_FragColor = vec4(0.55 * lightPower.r, 0.24 * lightPower.g, 0.075 * lightPower.b, texel.a); //
+      //gl_FragColor = vec4(fNormal, 1.0);
+      gl_FragColor = vec4(texel.rgb * lightPower, texel.a);
+	}
+		</script>
+
+  <script id="terrain-vertexShader" type="x-shader/x-vertex">
+    precision mediump float;
+
+      attribute vec3 vPosition;
+      attribute vec2 vTexCoord;
+      attribute vec3 vNormal;
+
+      varying vec2 fTexCoord;
+      varying vec3 fNormal;
+
+      uniform mat4 modelMatrix;
+      uniform mat4 viewMatrix;
+      uniform mat4 projectionMatrix;
+
+      void main() {
+        fTexCoord = vTexCoord;
+        fNormal = (modelMatrix * vec4(vNormal, 0.0)).xyz;
+        gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vPosition, 1.0);
+      }
+      </script>
+  <script id="terrain-fragmentShader" type="x-shader/x-fragment">
+    precision mediump float;
+
+      struct DirectionalLight {
+        vec3 color;
+        vec3 direction;
+      };
+
+      varying vec2 fTexCoord;
+      varying vec3 fNormal;
+
+      uniform sampler2D texture;
+      uniform vec3 ambientColor;
+      uniform DirectionalLight sun;
+
+    void main() {
+        vec3 normalizedLightDirection = normalize(sun.direction);
+        vec3 normalizedNormal = normalize(fNormal);
+        vec4 texel = texture2D(texture, fTexCoord);
+        vec3 lightPower = ambientColor + sun.color * max(dot(normalizedNormal, normalizedLightDirection), 0.0);
+
+        //gl_FragColor = vec4(0.55 * lightPower.r, 0.24 * lightPower.g, 0.075 * lightPower.b, texel.a); //
+        //gl_FragColor = vec4(fNormal, 1.0);
+        gl_FragColor = vec4(texel.rgb * lightPower, texel.a);
+		//gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+      </script>
+  <script type="text/javascript" src="ASS2.js"></script>
+  <script type="text/javascript" src="../Source/Insect.js"></script>
+  <script type="text/javascript" src="../Source/BodyPart.js"></script>
+  <script type="text/javascript" src="../Source/Sphere.js"></script>
+  <script type="text/javascript" src="../Source/Cube.js"></script>
+  <script type="text/javascript" src="../Source/Terrain.js"></script>
+  <script type="text/javascript" src="../../lib/cs465/initShaders.js"></script>
+  <script type="text/javascript" src="../../lib/cs465/MV.js"></script>
+</head>
+
+<body>
+  <canvas id="render-surface" width="1600" height="720">
+    Your browser doesn't support HTML5 canvas! upgrad.
+  </canvas>
+  <img id="crate" src="../Source/crate.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="crate2" src="../Source/crate2.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="rainbow" src="../Source/rainbowWrap.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="rainbow2" src="../Source/rainbowWrap2.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="rays" src="../Source/rays.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="metal" src="../Source/metal.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="doga" src="../Source/doga.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="simge" src="../Source/simge.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <img id="grass" src="../Source/grassy3.png" width="0" height="0" crossorigin="Anonymous"></img>
+  <fieldset class="dotted-fieldset">
+    <form class="pure-form">
+      <fieldset>
+        Frame Time(ms): <input type="number" id="playbackInput" class="green-input pure-input-rounded" min="10" max="1000" step="30" value="10" />
+        Interpolation Interval (0-1]: <input type="number" id="interpolationInput" class="green-input pure-input-rounded" min="0.001" max="1" step="0.01" value="0.101" />
+        File Name: <input type="text" id="fileNameInput" class="green-input pure-input-rounded" />
+      </fieldset>
+    </form>
+    <button id="textureChangeButton" class="green-button hover-animation-b pure">Change Texture</button>
+    <button id="saveStateButton" class="green-button hover-animation-b pure button">Push Key Frame</button>
+    <button id="finishAnimButton" class="green-button hover-animation-b pure button">Finish Animation</button>
+    <div class="upload-btn-wrapper hover-animation">
+      <button class="green-button pure button">Load Animation</button>
+      <input type="file" id="loadAnimButton" name="loadFile" />
+    </div>
+  </fieldset>
+  <p>
+    <div class="wrapper">
+      <div class="custom-div one">
+        <div>
+          Translate Thorax
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p>X: -50 <input id="translateThoraxXSlider" type="range" class="slider" min="-50" max="50" step="1" value="0" /> 50
+                <p>Y: -50 <input id="translateThoraxYSlider" type="range" class="slider" min="-50" max="50" step="1" value="0" /> 50
+                  <p>Z: -50 <input id="translateThoraxZSlider" type="range" class="slider" min="-50" max="50" step="1" value="0" /> 50
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Thorax
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p>X: 0 <input id="rotateThoraxXSlider" type="range" class="slider" min="0" max="360" step="5" value="0" /> 360
+                <p>Y: 0 <input id="rotateThoraxYSlider" type="range" class="slider" min="0" max="360" step="5" value="0" /> 360
+                  <p>Z: 0 <input id="rotateThoraxZSlider" type="range" class="slider" min="0" max="360" step="5" value="270" /> 360
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="custom-div two">
+        <div>
+          Rotate Head
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -45 <input id="rotateHeadXSlider" type="range" class="slider" min="-45" max="45" step="5" value="0" /> 45
+                <p> Z: -45 <input id="rotateHeadZSlider" type="range" class="slider" min="-45" max="45" step="5" value="0" /> 45
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="custom-div three">
+        <div>
+          Rotate Abdomen
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -45 <input id="rotateAbdomenXSlider" type="range" class="slider" min="-45" max="45" step="5" value="0" /> 45
+                <p> Z: -45 <input id="rotateAbdomenZSlider" type="range" class="slider" min="-45" max="45" step="5" value="0" /> 45
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="custom-div four">
+        <div>
+          Rotate Head Upper Leg 1
+        </div>
+        <div class="custom-div dauntless">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -15 <input id="rotateHeadUpperLeg1XSlider" type="range" class="slider" min="-45" max="-15" step="5" value="-30" /> 15
+                <p> Y: -30 <input id="rotateHeadUpperLeg1YSlider" type="range" class="slider" min="30" max="120" step="5" value="60" /> 60
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Head Lower Leg 1
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> Y: -15 <input id="rotateHeadLowerLeg1YSlider" type="range" class="slider" min="30" max="150" step="5" value="75" /> 105
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="custom-div five">
+        <div>
+          Rotate Thorax Upper Leg 1
+        </div>
+        <div class="custom-div dauntless">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -15 <input id="rotateThoraxUpperLeg1XSlider" type="range" class="slider" min="-15" max="15" step="5" value="0" /> 15
+                <p> Y: -30 <input id="rotateThoraxUpperLeg1YSlider" type="range" class="slider" min="30" max="120" step="5" value="60" /> 60
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Thorax Lower Leg 1
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> Y: -15 <input id="rotateThoraxLowerLeg1YSlider" type="range" class="slider" min="30" max="150" step="5" value="75" /> 105
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="custom-div six">
+        <div>
+          Rotate Abdomen Upper Leg 1
+        </div>
+        <div class="custom-div dauntless">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -15 <input id="rotateAbdomenUpperLeg1XSlider" type="range" class="slider" min="15" max="45" step="5" value="30" /> 15
+                <p> Y: -30 <input id="rotateAbdomenUpperLeg1YSlider" type="range" class="slider" min="30" max="120" step="5" value="60" /> 60
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Abdomen Lower Leg 1
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> Y: -15 <input id="rotateAbdomenLowerLeg1YSlider" type="range" class="slider" min="30" max="150" step="5" value="75" /> 105
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="custom-div seven">
+        <div>
+          Rotate Head Upper Leg 2
+        </div>
+        <div class="custom-div dauntless">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -15 <input id="rotateHeadUpperLeg2XSlider" type="range" class="slider" min="15" max="45" step="5" value="30" /> 15
+                <p> Y: -60 <input id="rotateHeadUpperLeg2YSlider" type="range" class="slider" min="60" max="150" step="5" value="120" /> 30
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Head Lower Leg 2
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> Y: -75 <input id="rotateHeadLowerLeg2YSlider" type="range" class="slider" min="-150" max="-30" step="5" value="-75" /> 45
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="custom-div eight">
+        <div>
+          Rotate Thorax Upper Leg 2
+        </div>
+        <div class="custom-div dauntless">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: -15 <input id="rotateThoraxUpperLeg2XSlider" type="range" class="slider" min="-15" max="15" step="5" value="0" /> 15
+                <p> Y: -60 <input id="rotateThoraxUpperLeg2YSlider" type="range" class="slider" min="60" max="150" step="5" value="120" /> 30
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Thorax Lower Leg 2
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> Y: -75 <input id="rotateThoraxLowerLeg2YSlider" type="range" class="slider" min="-150" max="-30" step="5" value="-75" /> 45
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <div class="custom-div nine">
+        <div>
+          Rotate Abdomen Upper Leg 2
+        </div>
+        <div class="custom-div dauntless">
+          <form class="pure-form">
+            <fieldset>
+              <p> X: 15 <input id="rotateAbdomenUpperLeg2XSlider" type="range" class="slider" min="-45" max="-15" step="5" value="-30" /> 15
+                <p> Y: -60 <input id="rotateAbdomenUpperLeg2YSlider" type="range" class="slider" min="60" max="150" step="5" value="120" /> 30
+            </fieldset>
+          </form>
+        </div>
+        <div>
+          Rotate Abdomen Lower Leg 2
+        </div>
+        <div class="custom-div">
+          <form class="pure-form">
+            <fieldset>
+              <p> Y: -75 <input id="rotateAbdomenLowerLeg2YSlider" type="range" class="slider" min="-150" max="-30" step="5" value="-75" /> 45
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+</body>
+
+</html>
