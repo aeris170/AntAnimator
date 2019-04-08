@@ -1,4 +1,4 @@
-# AntAnimator
+# Ant Animator
 
 In collab with: [Fazilet Simge ER](https://github.com/simge98)
 
