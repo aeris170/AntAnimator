@@ -1,5 +1,7 @@
 # AntAnimator
 
+In collab with: [Fazilet Simge ER](https://github.com/simge98)
+
 ## Live Demo:
 See the live demo at: [My Website](http://doga.oruc.ug.bilkent.edu.tr/antAnimator/Executable/ASS2.html)
 Download the sample walking animation: [Walking](http://doga.oruc.ug.bilkent.edu.tr/antAnimator/walking.txt)
