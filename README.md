@@ -15,7 +15,7 @@ An ant animator. Written using plain WebGL. Draws a terrain and an ant over it. 
   * Ability to save and load linearly interpolated animations.
   * Free camera.(Not actually free, more like almost free)
   
-## Dependancies: 
+## Dependencies: 
   * Ed Angel & David Schreiner's MV.js and initShaders.js
 
 ## Instructions:
