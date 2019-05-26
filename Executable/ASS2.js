@@ -295,9 +295,7 @@ function animate(insect, lines, i, playbackSpeed) {
   insect.getAbdomenUpperLeg2().setRotX(frameValues[25]);
   insect.getAbdomenUpperLeg2().setRotY(frameValues[26]);
   insect.getAbdomenLowerLeg2().setRotY(frameValues[27]);
-  //if (i < lines.length) {
-  setTimeout(animate, playbackSpeed, insect, lines, i + 1, playbackSpeed); // TODO: get playback speed from slider
-  //}
+  setTimeout(animate, playbackSpeed, insect, lines, i + 1, playbackSpeed);
 }
 
 function texture(gl, name) {
